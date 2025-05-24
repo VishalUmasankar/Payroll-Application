@@ -1,47 +1,57 @@
 package com.example.empay;
 
+import org.springframework.web.bind.annotation.*;
+import java.util.ArrayList;
 import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class empco {
 
-    @Autowired
-    empser service;
+    private List<empdata> employeeList = new ArrayList<>();
+    private int nextId = 1;
 
     @GetMapping("/data")
-    public List<empdata>  info() {
-        return service.empinfo();
+    public List<empdata> info() {
+        return employeeList;
     }
 
-    @GetMapping("/data/{id}")
+    @GetMapping("/data/get/{id}")
     public String infoid(@PathVariable int id) {
-        return service.empid(id);
+        for (empdata emp : employeeList) {
+            if (emp.getId() == id) {
+                return emp.toString();
+            }
+        }
+        return "Employee not found!";
     }
 
-    @PostMapping("/data")
-    public void addid(@RequestBody empdata newid) {
-        service.addid(newid);
-        
+    @PostMapping("/data/create")
+    public String addid(@RequestBody EmpDTO dto) {
+        empdata emp = new empdata(nextId++, dto.getName(), dto.getSal());
+        employeeList.add(emp);
+        return "Employee added: " + emp.toString();
     }
 
-    @PutMapping("/data/{id}")
-    public String updateid(@PathVariable int id, @RequestBody empdata upid) {
-        service.updatid(id, upid);
-        return "Employee with ID " + id + " updated.";
+    @PutMapping("/data/update/{id}")
+    public String updateid(@PathVariable int id, @RequestBody EmpDTO dto) {
+        for (empdata emp : employeeList) {
+            if (emp.getId() == id) {
+                emp.setName(dto.getName());
+                emp.setSal(dto.getSal());
+                return "Employee updated: " + emp.toString();
+            }
+        }
+        return "Employee not found!";
     }
 
-    @DeleteMapping("/data/{id}")
+    @DeleteMapping("/data/delete/{id}")
     public String deleteid(@PathVariable int id) {
-        service.deleteid(id);
-        return "Employee with ID " + id + " deleted.";
+        for (empdata emp : employeeList) {
+            if (emp.getId() == id) {
+                employeeList.remove(emp);
+                return "Employee deleted with ID: " + id;
+            }
+        }
+        return "Employee not found!";
     }
 }
