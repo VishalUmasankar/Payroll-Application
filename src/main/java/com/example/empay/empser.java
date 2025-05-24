@@ -1,53 +1,48 @@
 package com.example.empay;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class empser {
 
-    private List<empdata> employeeList = new ArrayList<>();
-    private int nextId = 1;
+    @Autowired
+    private EmpRepository repository;
 
-    public List<empdata> getAllEmployees() {
-        return employeeList;
+    public List<empdata> empinfo() {
+        return repository.findAll();
     }
 
-    public String getEmployeeById(int id) {
-        for (empdata emp : employeeList) {
-            if (emp.getId() == id) {
-                return emp.toString();
-            }
+    public String empid(int id) {
+        Optional<empdata> data = repository.findById(id);
+        if (data.isPresent()) {
+            empdata emp = data.get();
+            return emp.getId() + " " + emp.getName() + " " + emp.getSal();
         }
         return "Employee not found!";
     }
 
-    public String addEmployee(EmpDTO dto) {
-        empdata emp = new empdata(nextId++, dto.getName(), dto.getSal());
-        employeeList.add(emp);
-        return "Employee added: " + emp.toString();
+    public void addid(EmpDTO dto) {
+        empdata emp = new empdata();
+        emp.setName(dto.getName());
+        emp.setSal(dto.getSal());
+        repository.save(emp);
     }
 
-    public String updateEmployee(int id, EmpDTO dto) {
-        for (empdata emp : employeeList) {
-            if (emp.getId() == id) {
-                emp.setName(dto.getName());
-                emp.setSal(dto.getSal());
-                return "Employee updated: " + emp.toString();
-            }
+    public void updatid(int id, EmpDTO dto) {
+        Optional<empdata> existingEmp = repository.findById(id);
+        if (existingEmp.isPresent()) {
+            empdata emp = existingEmp.get();
+            emp.setName(dto.getName());
+            emp.setSal(dto.getSal());
+            repository.save(emp);
         }
-        return "Employee not found!";
     }
 
-    public String deleteEmployee(int id) {
-        for (empdata emp : employeeList) {
-            if (emp.getId() == id) {
-                employeeList.remove(emp);
-                return "Employee deleted with ID: " + id;
-            }
-        }
-        return "Employee not found!";
+    public void deleteid(int id) {
+        repository.deleteById(id);
     }
 }

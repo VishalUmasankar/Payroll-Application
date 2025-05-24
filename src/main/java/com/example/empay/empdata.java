@@ -1,11 +1,13 @@
 package com.example.empay;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import jakarta.persistence.Id;
 
 @Entity
 public class empdata {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
     private int sal;
@@ -53,5 +55,9 @@ public class empdata {
                 ", name='" + name + '\'' +
                 ", sal=" + sal +
                 '}';
+    }
+    public empdata(EmpDTO dto) {
+        this.name = dto.getName();
+        this.sal = dto.getSal();
     }
 }
