@@ -1,63 +1,33 @@
-package com.example.empay;
+/** empdata.java */
+package com.example.empay; // Changed package to com.example.empay
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.*;
-import jakarta.persistence.Id;
+import java.time.LocalDate;
+import java.util.List;
 
-@Entity
-public class empdata {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+import com.example.empay.EmpDTO;
+import lombok.Data;      
+
+public @Data class empdata {
+
+    private int employeeId;
     private String name;
-    private int sal;
+    private long salary;
+    private String gender;
+    private LocalDate startDate;
+    private String note;
+    private String profilePic;
+    private List<String> departments;
 
+    public empdata() { }
 
-    public empdata() {
-    }
-
- 
-    public empdata(int id, String name, int sal) {
-        this.id = id;
-        this.name = name;
-        this.sal = sal;
-    }
-
- 
-    public int getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public int getSal() {
-        return sal;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setSal(int sal) {
-        this.sal = sal;
-    }
-
-    @Override
-    public String toString() {
-        return "empdata{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", sal=" + sal +
-                '}';
-    }
-    public empdata(EmpDTO dto) {
-        this.name = dto.getName();
-        this.sal = dto.getSal();
+    public empdata(int empId, EmpDTO empPayrollDTO) {
+        this.employeeId = empId;
+        this.name = empPayrollDTO.name;
+        this.salary = empPayrollDTO.salary;
+        this.gender = empPayrollDTO.gender;
+        this.note = empPayrollDTO.note;
+        this.startDate = empPayrollDTO.startDate;
+        this.profilePic = empPayrollDTO.profilePic;
+        this.departments = empPayrollDTO.department;
     }
 }
